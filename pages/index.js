@@ -1,7 +1,6 @@
-import Link from 'next/link';
-import styles from '../styles/styles.module.css';
 import { useEffect, useState } from 'react';
 import { ethers } from 'ethers';
+import LandingPage from '@/components/landing/Landing';
 
 function HomePage() {
   const [isMetamaskInstalled, setIsMetamaskInstalled] = useState(false);
@@ -59,15 +58,7 @@ function HomePage() {
     }
   }
   return(
-    <div className={styles.container}>
-      <h1>Welcome, Please select an option below to continue</h1>
-      <button className={styles.btn} onClick={handleMetamaskLogin}>Login with Metamask</button>
-      <br />
-      <br />
-      <Link href="/signup">
-      <button className={styles.btn}>Signup</button>
-      </Link>
-    </div>
+    <LandingPage metamaskHandler={handleMetamaskLogin} />
   )
 }
 export default HomePage;
