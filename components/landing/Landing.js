@@ -9,8 +9,8 @@ const LandingPage = ({ metamaskHandler }) => {
   return (
     <div className="flex w-full justify-center px-4">
       <div className="flex flex-col w-full max-w-[1200px]">
-        <TopNav metamaskHandler={metamaskHandler} connecting setConnecting />
-        <div className="max-w-[1060px] flex flex-col w-full self-center">
+        <TopNav metamaskHandler={metamaskHandler} connecting={connecting} setConnecting={setConnecting} />
+        <div className="flex flex-col w-full self-center">
           <div className="h-[20vh] w-full -z-10 relative">
             <div className="flex justify-end max-md:hidden absolute top-0 right-0 w-[42vw] h-[80vh] max-h-[600px]">
               {/* <div className="absolute top-0 right-0 left-[450px] h-[80vh] max-h-[600px] overflow-visible bg-indigo-100 blur-2xl" /> */}

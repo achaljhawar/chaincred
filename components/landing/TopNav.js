@@ -17,16 +17,17 @@ const TopNav = ({ metamaskHandler, connecting, setConnecting }) => {
         <NavButton label="Our Team" />
       </div>
       <div className="flex-1 flex justify-end">
-        <div
-          className="flex border border-black hover:text-indigo-600 hover:border-indigo-600 transition-colors px-4 rounded-lg items-center cursor-pointer"
+        <button
+          className="flex border disabled:cursor-wait border-black hover:text-indigo-600 hover:border-indigo-600 transition-colors px-4 rounded-lg items-center cursor-pointer"
           onClick={async () => {
             setConnecting(true);
             await metamaskHandler();
             setConnecting(false);
           }}
+          disabled={connecting}
         >
           Connect Wallet
-        </div>
+        </button>
       </div>
     </div>
   );
