@@ -1,12 +1,12 @@
-const NavButton = ({label}) => {
-    return (
-        <div className="flex items-center px-3 rounded-md hover:bg-indigo-400 hover:text-white cursor-pointer select-none">
-            {label}
-        </div>
-    );
-}
+const NavButton = ({ label }) => {
+  return (
+    <div className="flex items-center px-3 rounded-md hover:bg-indigo-400 hover:text-white transition-colors cursor-pointer select-none">
+      {label}
+    </div>
+  );
+};
 
-const TopNav = ({metamaskHandler}) => {
+const TopNav = ({ metamaskHandler, connecting, setConnecting }) => {
   return (
     <div className="flex w-full h-20 py-4 gap-4">
       <div className="flex-1 flex">
@@ -17,7 +17,16 @@ const TopNav = ({metamaskHandler}) => {
         <NavButton label="Our Team" />
       </div>
       <div className="flex-1 flex justify-end">
-        <div className="flex border border-black px-4 rounded-lg items-center cursor-pointer" onClick={metamaskHandler}>Connect Wallet</div>
+        <div
+          className="flex border border-black hover:text-indigo-600 hover:border-indigo-600 transition-colors px-4 rounded-lg items-center cursor-pointer"
+          onClick={async () => {
+            setConnecting(true);
+            await metamaskHandler();
+            setConnecting(false);
+          }}
+        >
+          Connect Wallet
+        </div>
       </div>
     </div>
   );
