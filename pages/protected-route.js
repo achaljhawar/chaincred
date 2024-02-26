@@ -1,7 +1,8 @@
+import ProtectedView from '@/components/protected/ProtectedView';
 import withAuth from '@/utils/withAuth';
 
 function ProtectedRoute() {
-    return <h1>hemlo</h1>
+    return <ProtectedView />;
 }
 
 export default withAuth(ProtectedRoute);

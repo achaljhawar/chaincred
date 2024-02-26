@@ -1,6 +1,6 @@
 import Image from "next/image";
 import { useState } from "react";
-import SignupInput from "@/components/SignupInput";
+import FormInput from "@/components/FormInput";
 import Checkbox from "@/components/Checkbox";
 
 function SignupPage() {
@@ -50,12 +50,12 @@ function SignupPage() {
       <Checkbox label="Sign up with wallet address" checked={useWallet} setter={setUseWallet} />
 
       {useWallet && (
-        <SignupInput field="Wallet address" value={walletAddress} setter={setWalletAddress} />
+        <FormInput field="Wallet address" value={walletAddress} setter={setWalletAddress} />
       )}
 
       <form onSubmit={handleSubmit} className="flex flex-col gap-6">
-        <SignupInput field="Name" value={name} setter={setName} />
-        <SignupInput field="Email" value={email} setter={setEmail} />
+        <FormInput field="Name" value={name} setter={setName} />
+        <FormInput field="Email" value={email} setter={setEmail} />
         <input type="hidden" name="formType" value="signup" />
         <input
           type="submit"
