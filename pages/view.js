@@ -105,15 +105,17 @@ const ViewPage = () => {
           />
           <label className="text-red-400 text-sm text-center">{errMsg}</label>
         </form>
-        {verify === false && <p>Degree not verified</p>}
+        {verify === false && <p> ❌ Degree not verified</p>}
 
         {verify === true && (
           <>
             {qrData ? (
               <pre>
                 {JSON.stringify(qrData, null, 4)}
-        
+                <br />
+                <br />
                 Hash: {sha256(JSON.stringify(qrData))}  
+                <p> ✅ Degree verified</p>
               </pre>
             ) : (
               <p>No QR data found</p> 
