@@ -20,13 +20,19 @@ const ViewPage = () => {
       method: "post",
       body: formData,
     };
-    const res = await fetch(
-      "http://api.qrserver.com/v1/read-qr-code/",
-      fetchOptions
-    );
-    const body = JSON.parse((await res.json())[0].symbol[0].data);
-    setQrData(body);
-    setFile(null);
+    try {
+      const res = await (
+        await fetch("http://api.qrserver.com/v1/read-qr-code/", fetchOptions)
+      ).json();
+      const body = JSON.parse(res[0].symbol[0].data);
+      if (body == null) throw Error("Not QR");
+      setQrData(body);
+      setFile(null);
+    } catch (e) {
+      console.error(e);
+      setFile(null);
+      alert("Failed to read QR code");
+    }
   };
 
   const handleFileChange = async (e) => {

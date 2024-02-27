@@ -101,11 +101,10 @@ const ProtectedView = () => {
     const size = "1000x1000";
     const baseURL = "http://api.qrserver.com/v1/create-qr-code/";
     const url = `${baseURL}?data=${encodeURIComponent(
-      jsonString
+      data
     )}&size=${size}`;
     setQrLink(url);
     setHash(sha256(data));
-    console.log("Submitted. ", url);
   };
 
   return (

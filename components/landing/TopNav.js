@@ -12,7 +12,7 @@ const TopNav = ({ metamaskHandler, connecting, setConnecting }) => {
       <div className="flex-1 flex">
         <h2 className="text-2xl font-semibold">CHAINCRED</h2>
       </div>
-      <div className="flex justify-center bg-slate-100 border border-slate-300 p-[2px] gap-1 rounded-md">
+      <div className="flex justify-center border border-slate-300 p-[2px] gap-0.5 rounded-md">
         <NavButton label="Features" />
         <NavButton label="Our Team" />
       </div>
