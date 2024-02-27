@@ -105,7 +105,7 @@ const ProtectedView = () => {
     )}&size=${size}`;
     setQrLink(url);
     setHash(sha256(data));
-    console.log("Submitted. ", sha256(data));
+    console.log("Submitted. ", url);
   };
 
   return (
