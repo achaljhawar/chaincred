@@ -73,33 +73,6 @@ async function handler(req, res) {
           res.status(200).json({message : "Registration failed email already registered"})
         }
       }
-      
-      /*
-      const fetchaddress = await contract.checkUserbyWallet(walletAddress);
-      if ((!(fetchemail))&&(!(fetchaddress))){
-        const tx = await contract.registerUser(email,walletAddress);
-        const txReceipt = await provider.waitForTransaction(tx.hash);
-        console.log(txReceipt);
-        if (!(req.body.walletAddress)){
-          res.status(200).json({ message: walletPrivateKey });
-          async function main(){
-            const info = await transporter.sendMail({
-              from : {
-                name : 'PicChain',
-                address : 'achaljhawar03@gmail.com'
-              },
-              to: `${email}`,
-              subject: "Here's your wallet address to access our app",
-              text: `${walletPrivateKey}`
-            })
-            console.log("Message sent: %s", info.messageId);
-          }
-        }
-        res.json({succes : true});
-      } else {
-        console.log("registration failed user already exists in the database")
-      }
-*/
       res.status(200).json({ 
         message: 'Registration successful!'  
       });

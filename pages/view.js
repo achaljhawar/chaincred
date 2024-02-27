@@ -5,6 +5,7 @@ const ViewPage = () => {
   const fileInputField = useRef(null);
   const [file, setFile] = useState(null);
   const [errMsg, setErrMsg] = useState("");
+  const [verify, verified] = useState(null);
   const formRef = useRef(null);
   const [qrData, setQrData] = useState({});
 
@@ -27,7 +28,24 @@ const ViewPage = () => {
       const body = JSON.parse(res[0].symbol[0].data);
       if (body == null) throw Error("Not QR");
       setQrData(body);
+      const hash = sha256(JSON.stringify(body))
+      const response = await fetch("/api/verifydegree",{
+        method: "POST",
+        headers: {
+          'Content-Type': 'text/plain'
+        },
+        body: hash ,
+      })
+      console.log(response);
+      const rest = await response.json();
+      console.log(rest);
+      if (response.status === 400){
+        verified(false);
+      } else {
+        verified(true);
+      }
       setFile(null);
+      
     } catch (e) {
       console.error(e);
       setFile(null);
@@ -87,15 +105,20 @@ const ViewPage = () => {
           />
           <label className="text-red-400 text-sm text-center">{errMsg}</label>
         </form>
-        {Object.entries(qrData).length ? (
-          <pre className="py-6">
-            {JSON.stringify(qrData, null, 4)}
-            <br />
-            <br />
-            Hash: {sha256(JSON.stringify(qrData))}
-          </pre>
-        ) : (
-          <></>
+        {verify === false && <p>Degree not verified</p>}
+
+        {verify === true && (
+          <>
+            {qrData ? (
+              <pre>
+                {JSON.stringify(qrData, null, 4)}
+        
+                Hash: {sha256(JSON.stringify(qrData))}  
+              </pre>
+            ) : (
+              <p>No QR data found</p> 
+            )}
+          </>
         )}
       </div>
     </div>

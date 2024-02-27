@@ -104,7 +104,18 @@ const ProtectedView = () => {
       data
     )}&size=${size}`;
     setQrLink(url);
-    setHash(sha256(data));
+    const hash = sha256(data).toString();
+    const response = await fetch("/api/uploadhashdata",{
+      method: "POST",
+      headers: {
+        'Content-Type': 'text/plain'
+      },
+      body: hash ,
+    })
+    console.log(response);
+    const rest = await response.json();
+    console.log(rest);
+    setHash(hash);
   };
 
   return (

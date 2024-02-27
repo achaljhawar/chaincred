@@ -5,7 +5,7 @@
 // will compile your contracts, add the Hardhat Runtime Environment's members to the
 // global scope, and execute the script.
 const ethers = require("ethers");
-const data = require("./walletwhitelist.json");
+const data = require("./HashStorage.json");
 const abi = data.abi;
 const bytecode = data.bytecode;
 require('dotenv').config();
