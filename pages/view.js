@@ -23,7 +23,7 @@ const ViewPage = () => {
     };
     try {
       const res = await (
-        await fetch("http://api.qrserver.com/v1/read-qr-code/", fetchOptions)
+        await fetch("https://api.qrserver.com/v1/read-qr-code/", fetchOptions)
       ).json();
       const body = JSON.parse(res[0].symbol[0].data);
       if (body == null) throw Error("Not QR");

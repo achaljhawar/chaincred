@@ -22,7 +22,7 @@ const AddButton = ({ onClick }) => {
     >
       Add course
       <svg
-        xmlns="http://www.w3.org/2000/svg"
+        xmlns="https://www.w3.org/2000/svg"
         width="16"
         height="16"
         fill="currentColor"
@@ -43,7 +43,7 @@ const DeleteButton = ({ onClick }) => {
       onClick={onClick}
     >
       <svg
-        xmlns="http://www.w3.org/2000/svg"
+        xmlns="https://www.w3.org/2000/svg"
         width="16"
         height="16"
         fill="currentColor"
@@ -99,7 +99,7 @@ const ProtectedView = () => {
     });
     setJsonString(data);
     const size = "1000x1000";
-    const baseURL = "http://api.qrserver.com/v1/create-qr-code/";
+    const baseURL = "https://api.qrserver.com/v1/create-qr-code/";
     const url = `${baseURL}?data=${encodeURIComponent(
       data
     )}&size=${size}`;
