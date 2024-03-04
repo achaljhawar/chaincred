@@ -52,17 +52,6 @@ const LandingPage = ({ metamaskHandler }) => {
               >
                 Sign Up
               </Link>
-              {/* <button
-                className="flex border disabled:cursor-wait border-black hover:text-indigo-600 hover:border-indigo-600 transition-colors py-2 px-4 rounded-lg items-center cursor-pointer"
-                onClick={async () => {
-                  setConnecting(true);
-                  await metamaskHandler();
-                  setConnecting(false);
-                }}
-                disabled={connecting}
-              >
-                Connect wallet
-              </button> */}
             </div>
           </section>
         </div>
