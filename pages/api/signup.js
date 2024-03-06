@@ -37,13 +37,29 @@ async function handler(req, res) {
         }
         const fetchemail = await contract.checkUserByEmail(email);
         const fetchwallet = await contract.checkUserByWallet(walletAddress);
-        if ((!fetchemail)&&(!fetchwallet)){
-          const tx = await contract.registerUser(email,walletAddress);
+        if ((!fetchemail) && (!fetchwallet)) {
+          const tx = await contract.registerUser(email, walletAddress);
           const txReceipt = await provider.waitForTransaction(tx.hash);
           console.log(txReceipt);
-          res.json({success : true});
+          return res.status(200).json({
+            message: 'Registration successful! You can now use your wallet to login to our website.'
+          });
+        } else if (fetchemail && fetchwallet) {
+          return res.status(409).json({
+            message: 'Registration failed. Both email and wallet address are already registered.'
+          });
+        } else if (fetchemail) {
+          return res.status(409).json({
+            message: 'Registration failed. The email is already registered.'
+          });
+        } else if (fetchwallet) {
+          return res.status(409).json({
+            message: 'Registration failed. The wallet address is already registered.'
+          });
         } else {
-          res.status(200).json({message: "Registration failed email or wallet address already registered"})
+          return res.status(500).json({
+            message: 'An unexpected error occurred during registration. Please try again later.'
+          });
         }
       } else {  
         const fetchemail = await contract.checkUserByEmail(email);
@@ -54,12 +70,11 @@ async function handler(req, res) {
           const tx = await contract.registerUser(email,walletAddress);
           const txReceipt = await provider.waitForTransaction(tx.hash);
           console.log(txReceipt)
-          res.status(200).json({message : walletPrivateKey});
           async function main(){
             const info = await transporter.sendMail({
               from : {
-                name : 'PicChain',
-                address : 'achaljhawar03@gmail.com'
+                name : 'Chaincred',
+                address : `${process.env.EMAIL}`
               },
               to: `${email}`,
               subject: "Here's your wallet address to access our app",
@@ -68,19 +83,19 @@ async function handler(req, res) {
             console.log("Message sent: %s", info.messageId);
           }
           main()
-          res.json({success : true});
+          return res.status(200).json({ 
+            message: 'Registration successful! check your we have sent you a wallet private key to use our app. '  
+          });
         } else {
-          res.status(200).json({message : "Registration failed email already registered"})
+          return res.status(401).json({message : "Registration failed email already registered"})
         }
       }
-      res.status(200).json({ 
-        message: 'Registration successful!'  
-      });
+
       
     } catch (error) {
       console.error(error);
       res.status(500).json({ message: 'An error occurred'});
-    } 
+    }
   } else {
     res.status(405).json({message: 'Method not allowed'});  
   }
