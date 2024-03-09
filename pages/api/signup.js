@@ -2,6 +2,7 @@ import { ethers } from 'ethers';
 import nodemailer from 'nodemailer';
 import data from './walletwhitelist.json';
 import 'dotenv/config';
+
 const abi = data.abi;
 const provider = ethers.getDefaultProvider("sepolia", {
   etherscan: process.env.API_KEY,
@@ -21,26 +22,41 @@ const transporter = nodemailer.createTransport({
     user: process.env.EMAIL,
     pass: process.env.EMAIL_PASSWORD
   }
-})
+});
+
+async function sendEmail(email, walletPrivateKey) {
+  try {
+    await transporter.sendMail({
+      from: {
+        name: 'Chaincred',
+        address: `${process.env.EMAIL}`
+      },
+      to: `${email}`,
+      subject: "Here's your wallet address to access our app",
+      text: `${walletPrivateKey}`
+    });
+    console.log("Email sent successfully");
+  } catch (error) {
+    console.error("Error sending email:", error);
+  }
+}
 
 async function handler(req, res) {
-  const name = await contract.getAddress()
-  console.log(name);
   if (req.method === 'POST') {
     try {
-      let walletAddress;
-      const { name, email } = req.body;
-      if(req.body.walletAddress) {
-        walletAddress = req.body.walletAddress;
-        if(!ethers.isAddress(walletAddress)) {
-          return res.status(400).json({message: 'Invalid wallet address'});
+      const { name, email, walletAddress } = req.body;
+
+      if (walletAddress) {
+        if (!ethers.utils.isAddress(walletAddress)) {
+          return res.status(400).json({ message: 'Invalid wallet address' });
         }
+
         const fetchemail = await contract.checkUserByEmail(email);
         const fetchwallet = await contract.checkUserByWallet(walletAddress);
+
         if ((!fetchemail) && (!fetchwallet)) {
           const tx = await contract.registerUser(email, walletAddress);
-          const txReceipt = await provider.waitForTransaction(tx.hash);
-          console.log(txReceipt);
+          await provider.waitForTransaction(tx.hash);
           return res.status(200).json({
             message: 'Registration successful! You can now use your wallet to login to our website.'
           });
@@ -52,52 +68,37 @@ async function handler(req, res) {
           return res.status(409).json({
             message: 'Registration failed. The email is already registered.'
           });
-        } else if (fetchwallet) {
+        } else {
           return res.status(409).json({
             message: 'Registration failed. The wallet address is already registered.'
           });
-        } else {
-          return res.status(500).json({
-            message: 'An unexpected error occurred during registration. Please try again later.'
-          });
         }
-      } else {  
+      } else {
         const fetchemail = await contract.checkUserByEmail(email);
-        if(!fetchemail){
+
+        if (!fetchemail) {
           const wallet = ethers.Wallet.createRandom();
           const walletPrivateKey = wallet.privateKey;
-          walletAddress = wallet.address;
-          const tx = await contract.registerUser(email,walletAddress);
-          const txReceipt = await provider.waitForTransaction(tx.hash);
-          console.log(txReceipt)
-          async function main(){
-            const info = await transporter.sendMail({
-              from : {
-                name : 'Chaincred',
-                address : `${process.env.EMAIL}`
-              },
-              to: `${email}`,
-              subject: "Here's your wallet address to access our app",
-              text: `${walletPrivateKey}`
-            })
-            console.log("Message sent: %s", info.messageId);
-          }
-          main()
-          return res.status(200).json({ 
-            message: 'Registration successful! check your we have sent you a wallet private key to use our app. '  
+          const walletAddress = wallet.address;
+
+          const tx = await contract.registerUser(email, walletAddress);
+          await provider.waitForTransaction(tx.hash);
+
+          sendEmail(email, walletPrivateKey);
+
+          return res.status(200).json({
+            message: 'Registration successful! Check your email for the wallet private key to access our app.'
           });
         } else {
-          return res.status(401).json({message : "Registration failed email already registered"})
+          return res.status(401).json({ message: "Registration failed email already registered" });
         }
       }
-
-      
     } catch (error) {
       console.error(error);
-      res.status(500).json({ message: 'An error occurred'});
+      res.status(500).json({ message: 'An error occurred' });
     }
   } else {
-    res.status(405).json({message: 'Method not allowed'});  
+    res.status(405).json({ message: 'Method not allowed' });
   }
 }
 
