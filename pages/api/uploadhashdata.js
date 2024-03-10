@@ -22,7 +22,7 @@ async function handler(req, res) {
       const txReceipt = await provider.waitForTransaction(tx.hash);
       console.log(txReceipt)
       res.status(200).json({ 
-        message: 'student added successfully'  
+        message: 'student gradesheet added successfully'  
       });
     } catch (error) {
       console.error(error);
