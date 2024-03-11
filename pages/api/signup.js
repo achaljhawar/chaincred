@@ -47,7 +47,7 @@ async function handler(req, res) {
       const { name, email, walletAddress } = req.body;
 
       if (walletAddress) {
-        if (!ethers.utils.isAddress(walletAddress)) {
+        if (!ethers.isAddress(walletAddress)) {
           return res.status(400).json({ message: 'Invalid wallet address' });
         }
 
