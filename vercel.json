@@ -1,10 +1,10 @@
 {
   "functions": {
     "pages/api/signup.js": {
-      "maxDuration": 60
+      "maxDuration": 30
     },
     "pages/api/uploadhashdata.js": {
-      "maxDuration": 60
+      "maxDuration": 30
     }
   }
 }

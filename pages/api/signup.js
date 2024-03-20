@@ -44,7 +44,7 @@ async function sendEmail(email, walletPrivateKey) {
 async function handler(req, res) {
   if (req.method === 'POST') {
     try {
-      const { name, email, walletAddress } = req.body;
+      const { email, walletAddress } = req.body;
 
       if (walletAddress) {
         if (!ethers.isAddress(walletAddress)) {
@@ -53,24 +53,23 @@ async function handler(req, res) {
 
         const fetchemail = await contract.checkUserByEmail(email);
         const fetchwallet = await contract.checkUserByWallet(walletAddress);
-
         if ((!fetchemail) && (!fetchwallet)) {
           const tx = await contract.registerUser(email, walletAddress);
           await provider.waitForTransaction(tx.hash);
           return res.status(200).json({
-            message: 'Registration successful! You can now use your wallet to login to our website.'
+            message: `Registration successful! You can now use your wallet to login to our website.`
           });
         } else if (fetchemail && fetchwallet) {
           return res.status(409).json({
-            message: 'Registration failed. Both email and wallet address are already registered.'
+            message: `Registration successful! You can now use your wallet to login to our website.`
           });
         } else if (fetchemail) {
           return res.status(409).json({
-            message: 'Registration failed. The email is already registered.'
+            message: `Registration successful! You can now use your wallet to login to our website.`
           });
         } else {
           return res.status(409).json({
-            message: 'Registration failed. The wallet address is already registered.'
+            message: `Registration successful! You can now use your wallet to login to our website.`
           });
         }
       } else {
@@ -87,10 +86,12 @@ async function handler(req, res) {
           sendEmail(email, walletPrivateKey);
 
           return res.status(200).json({
-            message: 'Registration successful! Check your email for the wallet private key to access our app.'
+            message: `Registration successful! You can now use your wallet to login to our website.`
           });
         } else {
-          return res.status(401).json({ message: "Registration failed email already registered" });
+          return res.status(401).json({ 
+            message: "Registration failed email already registered" 
+          });
         }
       }
     } catch (error) {
