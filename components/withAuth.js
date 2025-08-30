@@ -8,43 +8,65 @@ const withAuth = (Component) => {
     const [resp, setResponse] = useState("");
     const [loading, setLoading] = useState(true);
     useEffect(() => {
-      const checkMetamask = async () => {
-        if (typeof window.ethereum !== "undefined") {
-          try {
-            await window.ethereum.request({ method: "eth_requestAccounts" });
+      const checkAuthentication = async () => {
+        if (typeof window.ethereum === "undefined") {
+          router.push("/");
+          return;
+        }
+
+        try {
+          // Check if user has connected wallet
+          const accounts = await window.ethereum.request({ method: "eth_accounts" });
+          if (accounts.length === 0) {
+            router.replace("/");
+            return;
+          }
+
+          // Verify authentication via cookie-based API
+          const response = await fetch("/api/verify", {
+            method: "GET",
+            credentials: "include", // Include cookies in request
+            headers: {
+              "Content-Type": "application/json",
+            },
+          });
+
+          if (!response.ok) {
+            router.replace("/");
+            return;
+          }
+
+          const result = await response.json();
+          setResponse(result.message);
+          
+          if (result.isAuthenticated && result.message === "Valid") {
+            // Verify that the authenticated address matches current wallet
             const provider = new ethers.BrowserProvider(window.ethereum);
             const signer = await provider.getSigner();
             const currentAddress = await signer.getAddress();
-            const token = sessionStorage.getItem(currentAddress);
-            if (token != "") {
-              const response = await fetch("/api/verify", {
+            
+            if (result.address.toLowerCase() !== currentAddress.toLowerCase()) {
+              // Wallet switched, need to re-authenticate
+              await fetch("/api/logout", {
                 method: "POST",
-                headers: {
-                  "Content-Type": "application/json",
-                  Authorization: `Bearer ${token}`,
-                },
+                credentials: "include"
               });
-              const newResponse = await response.json();
-              setResponse(newResponse.message);
-              if (newResponse.message !== "Valid") {
-                window.sessionStorage.removeItem(currentAddress);
-                router.replace("/");
-              } else {
-                setLoading(false);
-              }
-            } else {
               router.replace("/");
+              return;
             }
-          } catch (err) {
-            console.error(err);
+            
+            setLoading(false);
+          } else {
+            router.replace("/");
           }
-        } else {
-          router.push("/");
+        } catch (err) {
+          console.error("Authentication error:", err.message);
+          router.replace("/");
         }
       };
 
-      checkMetamask();
-    }, [resp, router]);
+      checkAuthentication();
+    }, [router]);
 
     return (
       <>

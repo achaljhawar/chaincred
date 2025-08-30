@@ -12,24 +12,26 @@ const signer = new ethers.Wallet(process.env.PRIVATE_KEY, provider);
 const contract = new ethers.Contract(contractaddress, abi, signer);
 
 async function handler(req, res) {
-  const name = await contract.getAddress()
-  console.log(name);
-  if (req.method === 'POST') {
-    try {
-      const hash = req.body;
-      console.log(hash);
-      const tx = await contract.store(hash);
-      const txReceipt = await provider.waitForTransaction(tx.hash);
-      console.log(txReceipt)
-      res.status(200).json({ 
-        message: 'student gradesheet added successfully'  
-      });
-    } catch (error) {
-      console.error(error);
-      res.status(500).json({ message: 'An error occurred'});
+  if (req.method !== 'POST') {
+    return res.status(405).json({ message: 'Method not allowed' });
+  }
+
+  try {
+    const hash = req.body;
+    
+    if (!hash || typeof hash !== 'string') {
+      return res.status(400).json({ message: 'Valid hash is required' });
     }
-  } else {
-    res.status(405).json({message: 'Method not allowed'});  
+
+    const tx = await contract.store(hash);
+    await provider.waitForTransaction(tx.hash);
+    
+    res.status(200).json({ 
+      message: 'Student gradesheet added successfully'  
+    });
+  } catch (error) {
+    console.error('Hash storage error:', error.message);
+    res.status(500).json({ message: 'Failed to store gradesheet hash' });
   }
 }
 

@@ -13,24 +13,31 @@ const signer = new ethers.Wallet(process.env.PRIVATE_KEY, provider);
 const contract = new ethers.Contract(contractaddress, abi, signer);
 
 async function handler(req, res) {
-  if (req.method === 'POST') {
-    const { address } = req.body;
-    console.log(address)
-    try {
-        const fetchwallet = await contract.checkUserByWallet(address);
-        if (!fetchwallet) {
-          return res.status(400).json({ message: 'Please register first' });
-        } 
+  if (req.method !== 'POST') {
+    return res.status(405).json({ message: 'Method not allowed' });
+  }
 
-      const nonce = crypto.randomBytes(32).toString('hex');
+  const { address } = req.body;
 
-      res.status(200).json({ message: nonce });
-    } catch (error) {
-      console.error(error);
-      res.status(500).json({ message: 'An error occurred' });
+  if (!address) {
+    return res.status(400).json({ message: 'Wallet address is required' });
+  }
+
+  if (!ethers.isAddress(address)) {
+    return res.status(400).json({ message: 'Invalid wallet address format' });
+  }
+
+  try {
+    const fetchwallet = await contract.checkUserByWallet(address);
+    if (!fetchwallet) {
+      return res.status(400).json({ message: 'Wallet not registered. Please register first.' });
     }
-  } else {
-    res.status(405).json({ message: 'Method not allowed' });
+
+    const nonce = `Please sign this message to authenticate: ${crypto.randomBytes(16).toString('hex')}`;
+    res.status(200).json({ nonce });
+  } catch (error) {
+    console.error('Nonce generation error:', error.message);
+    res.status(500).json({ message: 'Failed to generate authentication nonce' });
   }
 }
 

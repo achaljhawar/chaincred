@@ -34,7 +34,7 @@ function HomePage() {
 
       const resp = await response.json();
 
-      const nonce = resp.message;
+      const nonce = resp.nonce;
       const signedMessage = await signer.signMessage(nonce);
       const data = { signedMessage, nonce, address };
       const authResponse = await fetch("/api/login", {
