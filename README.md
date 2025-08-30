@@ -2,8 +2,11 @@
 
 A blockchain-based degree verification system that allows institutions to store and verify educational credentials securely on the Ethereum blockchain. ChainCred makes degree verification as simple as scanning a QR code.
 
-## 🎥 Demo Video
 
+
+
+## 🎥 Demo Video
+https://github.com/user-attachments/assets/ddcb824d-32c0-4f78-9dff-52f7d7505cc5
 
 ---
 
